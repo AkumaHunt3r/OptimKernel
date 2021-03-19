@@ -97,7 +97,7 @@ struct cpufreq_interactive_tunables {
 	/* Hi speed to bump to from lo speed when load burst (default max) */
 	unsigned int hispeed_freq;
 	/* Go to hi speed when CPU load at or above this value. */
-#define DEFAULT_GO_HISPEED_LOAD 80
+#define DEFAULT_GO_HISPEED_LOAD 99
 	unsigned long go_hispeed_load;
 	/* Target load. Lower values result in higher CPU speeds. */
 	spinlock_t target_loads_lock;
@@ -144,7 +144,7 @@ struct cpufreq_interactive_tunables {
 	 * use_sched_load is true, this flag is ignored and windows
 	 * will always be aligned.
 	 */
-	bool align_windows = true;
+	bool align_windows;
 
 	/*
 	 * Stay at max freq for at least max_freq_hysteresis before dropping
@@ -156,7 +156,7 @@ struct cpufreq_interactive_tunables {
 	bool ignore_hispeed_on_notif;
 
 	/* Ignore min_sample_time for notification */
-	bool fast_ramp_down = false;
+	bool fast_ramp_down;
 
 	/* Whether to enable prediction or not */
 	bool enable_prediction;

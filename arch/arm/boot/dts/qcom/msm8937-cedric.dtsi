@@ -191,7 +191,7 @@
 					   <700 700 0>,
 					   <400 400 0>;
 	qcom,stepchg-voltage-mv = <4400>;
-	qcom,stepchg-current-ma = <18500>;
+	qcom,stepchg-current-ma = <1850>;
 	qcom,stepchg-taper-ma = <1500>;
 	qcom,stepchg-iterm-ma = <125>;
 	/delete-property/ qcom,enable-hvdcp-9v;

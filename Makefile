@@ -626,12 +626,6 @@ KBUILD_AFLAGS	+= $(CLANG_FLAGS)
 ifeq ($(ld-name),lld)
 KBUILD_CFLAGS	+= -fuse-ld=lld
 endif
-ifeq ($(ld-name),gold)
-KBUILD_CFLAGS 	+= -fuse-ld=gold
-endif
-ifeq ($(ld-name),bfd)
-KBUILD_CFLAGS	+= -fuse-ld=bfd
-endif
 ifdef CONFIG_LLVM_POLLY
 KBUILD_CFLAGS	+= -mllvm -polly \
 		   -mllvm -polly-run-dce \
@@ -655,49 +649,16 @@ LDFINAL       := $(CONFIG_SHELL) $(srctree)/scripts/gcc-ld $(LTO_LDFLAGS)
 AR            := $(CROSS_COMPILE)gcc-ar
 NM            := $(CROSS_COMPILE)gcc-nm
 DISABLE_LTO   := -fno-lto
-export DISABLE_LTO
+export DISABLE_LTO LDFINAL
 ifdef CONFIG_GRAPHITE
 LTO_CFLAGS    += -floop-interchange -ftree-loop-distribution -floop-strip-mine -floop-block -ftree-vectorize
 endif
 endif
-ifeq ($(cc-name),clang)
-ifdef CONFIG_LTO_THIN
-LTO_CFLAGS  	   := -flto=thin
-ifeq ($(ld-name),lld)
-LDFLAGS		+= --thinlto-cache-dir=.thinlto-cache
-else
-LDFLAGS		+= --plugin-opt=cache-dir=.thinlto-cache
-endif
-else
-LTO_CFLAGS  	   := -flto
-endif
-LTO_CFLAGS         += -fvisibility=hidden
-DISABLE_LTO_CLANG  := -fno-lto -fvisibility=default
-DISABLE_LTO	   := $(DISABLE_LTO_CLANG)
-LDFINAL            := $(LD)
-ifeq ($(ld-name),gold)
-LDFLAGS            += -plugin LLVMgold.so
-LDFLAGS		   += -plugin-opt=-function-sections
-LDFLAGS		   += -plugin-opt=-data-sections
-endif
-# use llvm-ar for building symbol tables from IR files, and llvm-dis instead
-# of objdump for processing symbol versions and exports
-LLVM_AR		  = llvm-ar
-LLVM_DIS	  = llvm-dis
-# Prepend something similar to an config because clang has many special cases
-LTO_CLANG         := y
-export LLVM_AR LLVM_DIS LTO_CLANG DISABLE_LTO_CLANG
-endif
 KBUILD_CFLAGS	+= $(LTO_CFLAGS)
-export LTO_CFLAGS
-else
-ifeq ($(ld-name),gold)
-LDFINAL       := $(LDBFD)
 else
 LDFINAL       := $(LD)
-endif
-endif
 export LDFINAL
+endif
 
 include $(srctree)/arch/$(SRCARCH)/Makefile
 
@@ -1607,8 +1568,7 @@ clean: $(clean-dirs)
 		-o -name '*.symtypes' -o -name 'modules.order' \
 		-o -name modules.builtin -o -name '.tmp_*.o.*' \
 		-o -name '*.ll' \
-		-o -name '*.gcno' \
-		-o -name '*.*.symversions' \) -type f -print | xargs rm -f
+		-o -name '*.gcno' \) -type f -print | xargs rm -f
 
 # Generate tags for editors
 # ---------------------------------------------------------------------------

@@ -53,37 +53,7 @@ archive_builtin()
 		${AR} rcsT${KBUILD_ARFLAGS} built-in.o			\
 					${KBUILD_VMLINUX_INIT}		\
 					${KBUILD_VMLINUX_MAIN}
-		if [ -n "${LTO_CLANG}" ]; then
-			mv -f built-in.o built-in.o.tmp
-			${LLVM_AR} rcsT${KBUILD_ARFLAGS} built-in.o $(${AR} t built-in.o.tmp)
-			rm -f built-in.o.tmp
-		fi
 	fi
-}
-
-# If LTO_CLANG is selected, collect generated symbol versions into
-# .tmp_symversions
-modversions()
-{
-	if [ -z "${LTO_CLANG}" ]; then
-		return
-	fi
-
-	if [ -z "${CONFIG_MODVERSIONS}" ]; then
-		return
-	fi
-
-	rm -f .tmp_symversions
-
-	for a in built-in.o ${KBUILD_VMLINUX_LIBS}; do
-		for o in $(${AR} t $a); do
-			if [ -f ${o}.symversions ]; then
-				cat ${o}.symversions >> .tmp_symversions
-			fi
-		done
-	done
-
-	echo "-T .tmp_symversions"
 }
 
 # Link of vmlinux.o used for section mismatch analysis
@@ -100,14 +70,7 @@ modpost_link()
 			${KBUILD_VMLINUX_MAIN}				\
 			--end-group"
 	fi
-	if [ -n "${CONFIG_LTO}" ]; then
-		# This might take a while, so indicate that we're doing
-		# an LTO link
-		info LTO vmlinux.o
-	else
-		info LD vmlinux.o
-	fi
-	${LDFINAL} ${LDFLAGS} -r -o ${1} $(modversions) ${objects}
+	${LDFINAL} ${LDFLAGS} -r -o ${1} ${objects}
 }
 
 # Link of vmlinux
@@ -119,14 +82,7 @@ vmlinux_link()
 	local objects
 
 	if [ "${SRCARCH}" != "um" ]; then
-				local ld=${LD}
-		local ldflags="${LDFLAGS} ${LDFLAGS_vmlinux}"
-
-		if [ -n "${LDFINAL}" ]; then
-			ldflags="${LDFLAGS_FINAL} ${LDFLAGS_vmlinux}"
-		fi
-
-		if [[ -n "${CONFIG_THIN_ARCHIVES}" && -z "${LTO_CLANG}" ]]; then
+		if [ -n "${CONFIG_THIN_ARCHIVES}" ]; then
 			objects="--whole-archive built-in.o ${1}"
 		else
 			objects="${KBUILD_VMLINUX_INIT}			\
@@ -136,7 +92,7 @@ vmlinux_link()
 				${1}"
 		fi
 
-		${LDFINAL} ${ldflags} -o ${2}		\
+		${LDFINAL} ${LDFLAGS} ${LDFLAGS_vmlinux} -o ${2}		\
 			-T ${lds} ${objects}
 	else
 		if [ -n "${CONFIG_THIN_ARCHIVES}" ]; then
@@ -239,6 +195,15 @@ case "${KCONFIG_CONFIG}" in
 	# Force using a file from the current directory
 	. "./${KCONFIG_CONFIG}"
 esac
+
+archive_builtin
+
+#link vmlinux.o
+info LD vmlinux.o
+modpost_link vmlinux.o
+
+# modpost vmlinux.o to check for section mismatches
+${MAKE} -f "${srctree}/scripts/Makefile.modpost" vmlinux.o
 
 # Update version
 info GEN .version

@@ -442,20 +442,20 @@ static int __scm_call_armv8_32(u32 w0, u32 w1, u32 w2, u32 w3, u32 w4, u32 w5,
 
 	do {
 		asm volatile(
-			__asmeq("%x0", R0_STR)
-			__asmeq("%x1", R1_STR)
-			__asmeq("%x2", R2_STR)
-			__asmeq("%x3", R3_STR)
-			__asmeq("%x4", R4_STR)
-			__asmeq("%x5", R5_STR)
-			__asmeq("%x6", R6_STR)
-			__asmeq("%x7", R0_STR)
-			__asmeq("%x8", R1_STR)
-			__asmeq("%x9", R2_STR)
-			__asmeq("%x10", R3_STR)
-			__asmeq("%x11", R4_STR)
-			__asmeq("%x12", R5_STR)
-			__asmeq("%x13", R6_STR)
+			__asmeq("%0", R0_STR)
+			__asmeq("%1", R1_STR)
+			__asmeq("%2", R2_STR)
+			__asmeq("%3", R3_STR)
+			__asmeq("%4", R4_STR)
+			__asmeq("%5", R5_STR)
+			__asmeq("%6", R6_STR)
+			__asmeq("%7", R0_STR)
+			__asmeq("%8", R1_STR)
+			__asmeq("%9", R2_STR)
+			__asmeq("%10", R3_STR)
+			__asmeq("%11", R4_STR)
+			__asmeq("%12", R5_STR)
+			__asmeq("%13", R6_STR)
 #ifdef REQUIRES_SEC
 			".arch_extension sec\n"
 #endif

@@ -395,7 +395,7 @@
 	qcom,msm-thermal {
 		compatible = "qcom,msm-thermal";
 		qcom,sensor-id = <5>;
-		qcom,poll-ms = <1000>;
+		qcom,poll-ms = <250>;
 		qcom,limit-temp = <50>;
 		qcom,temp-hysteresis = <15>;
 		qcom,freq-step = <2>;
@@ -415,8 +415,8 @@
 		qcom,disable-vdd-mx;
 		qcom,disable-psm;
 		qcom,disable-ocr;
-		qcom,vdd-restriction-temp = <46>;
-		qcom,vdd-restriction-temp-hysteresis = <15>;
+		qcom,vdd-restriction-temp = <47>;
+		qcom,vdd-restriction-temp-hysteresis = <20>;
 		vdd-dig-supply = <&pm8937_s2_floor_level>;
 
 		qcom,vdd-dig-rstr {

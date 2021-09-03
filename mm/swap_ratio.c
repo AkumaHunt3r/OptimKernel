@@ -25,7 +25,7 @@
  * 100 indicates that all writes should
  * go to fast swap device.
  */
-int sysctl_swap_ratio = 100;
+int sysctl_swap_ratio = 75;
 
 /* Enable the swap ratio feature */
 int sysctl_swap_ratio_enable;

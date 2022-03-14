@@ -585,7 +585,7 @@ CONFIG_CPU_FREQ_GOV_INTERACTIVE=y
 # CPU frequency scaling drivers
 #
 # CONFIG_CPUFREQ_DT is not set
-# CONFIG_CPU_BOOST is not set
+CONFIG_CPU_BOOST=y
 
 #
 # ARM CPU frequency scaling drivers
